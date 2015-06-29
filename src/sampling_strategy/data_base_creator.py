@@ -107,7 +107,6 @@ def _test():
     d = DataSimulation()
     myDataBaseExample = d.generate_default2MVGM_testcase()
 
-    print myDataBaseExample
-
+    print [myDataBaseExample[a] for a in myDataBaseExample.keys()]
 if __name__ == '__main__':
     _test()

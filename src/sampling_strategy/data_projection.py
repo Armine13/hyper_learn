@@ -175,13 +175,21 @@ class PModelPCA(IProjectionModel):
     def project_data(self, data):
         return self._transformation.transform(data)
 
-    def display_base(self, ax, *argv, **kwargs):  # param_dict={}):
-        """.. todo:: [code] merge both plot outputs """
-        base = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
-        base_ = self._transformation.transform(6*base)
-        out1 = ax.plot(base_[:2,  1], base_[:2,  0], *argv, **kwargs)
-        out2 = ax.plot(base_[-2:, 1], base_[-2:, 0], *argv, **kwargs)
-        return out1, out2
+#    def display_base(self, ax, *argv, **kwargs):  # param_dict={}):
+#        """.. todo:: [code] merge both plot outputs """
+#        base = np.array([[-1, 0], [1, 0], [0, -1], [0, 1]])
+#        base_ = self._transformation.transform(6*base)
+#        out1 = ax.plot(base_[:2,  1], base_[:2,  0], *argv, **kwargs)
+#        out2 = ax.plot(base_[-2:, 1], base_[-2:, 0], *argv, **kwargs)
+#        
+#        return out1, out2
+    def display_base(self, axisId, clr, lineW=2):
+        base = np.array([[-1, 1, 0, 0], [0, 0, -1, 1]]).T
+        base_projected = self._transformation.transform(2*base)
+        x, y = base_projected.T
+        color = "{}-".format(clr)        
+        axisId.plot(x[0:2], y[0:2], color, linewidth=lineW)
+        axisId.plot(x[2:4], y[2:4], color, linewidth=lineW)
 
 
 class PModelPCAsingleClass(PModelPCA):
