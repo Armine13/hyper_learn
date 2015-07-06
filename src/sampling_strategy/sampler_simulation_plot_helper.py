@@ -7,7 +7,7 @@
 from data_base import *
 from data_base_creator import *
 from i_data_model import *
-
+from data_projection import *
 from sampler_simulation_plot_helper import *
 from projection_model_pca import *
 from sklearn.neighbors import KernelDensity
@@ -186,7 +186,7 @@ def _test():
     plt.show()
     
     #Project data
-    base = ProjectionModelPCA(xxAll)
+    base = PModelPCA(xxAll)
     xx1_projected = base.project_data(xx1)
     xx2_projected = base.project_data(xx2)
     base.display_base(ax11)
