@@ -1,6 +1,8 @@
 from random_sampler import *
 from sklearn.neighbors import KernelDensity
 
+colorScheme = ['b', 'r', 'g', 'c', 'm', 'y', 'k']
+        
 class ISamplingModel (object):
 
     """
@@ -51,14 +53,20 @@ class ISamplingModel (object):
                 If the sampling model needs some fitting, here is where \
                 it should take place.
         """
-        self._data = []
-        self._peaks = [0, 0]
+        
         pass
+    
+    def drawSamplingProbability(self, targetAxis, sigmas):
+        self._sigmas = sigmas
+        currentAxisLimits = np.array(targetAxis.axis())
+        displayScalingFactor = ((2*np.pi*1)**0.5)*currentAxisLimits[3]*.4
+        X_plot = np.linspace( currentAxisLimits[0], currentAxisLimits[1], 100)[:, np.newaxis]
+        for currentSigma in sigmas:
+            for i, mu in enumerate(self._peaks.values()):
+                Y_plot = ((2*np.pi*currentSigma)**-0.5)*np.exp(-((X_plot-mu)**2)*(2*currentSigma)**-1)
+                targetAxis.plot(X_plot,displayScalingFactor*Y_plot, colorScheme[i]+":", alpha=0.8)
         
     def plotProjectedDataPDF(self, targetAxis):
-        colorScheme = ['b', 'r', 'g', 'c', 'm', 'y', 'k']
-        
-        peaks = [0, 0]
         
         allData = np.concatenate(self._projectedData.values())
         
@@ -69,7 +77,7 @@ class ISamplingModel (object):
                               f_of_D_max+0.1*(f_of_D_max-f_of_D_min)]
         X_plot = np.linspace( Rm_subspaceLimits[0], Rm_subspaceLimits[1], 1000)[:, np.newaxis]
         peaks = {}
-        i = 0
+        ii = 0
         for key in self._projectedData:
             X = (self._projectedData[key][:,0])[:,np.newaxis]
             kde = KernelDensity(kernel='gaussian', bandwidth=0.3).fit(X)
@@ -78,17 +86,14 @@ class ISamplingModel (object):
             peaks[key] = X_plot[jj,0]
             targetAxis.fill( X_plot[:, 0] ,
                              np.exp(log_dens) ,
-                             colorScheme[i], alpha=0.2,
+                             colorScheme[ii], alpha=0.2,
                            )
-            i = i + 1    
+            ii = ii + 1    
                                    
         currentAxisLimits = targetAxis.axis()
+        
+        #The line below doesn't work for D > 2: ValueError("x and y must have same first dimension")
+        #TODO: Fix for D > 2
         targetAxis.stem(peaks.values(),np.array(targetAxis.axis())[3]*np.array([1,1]),'k', markerfmt=' ')
         targetAxis.axis(currentAxisLimits)
         self._peaks = peaks
-
-    
-        
-   
-    
-
